@@ -475,6 +475,7 @@ fn parse(
     let syntax = if is_type_script {
         Syntax::Typescript(TsConfig {
             tsx: is_jsx,
+            decorators: true,
             ..Default::default()
         })
     } else {

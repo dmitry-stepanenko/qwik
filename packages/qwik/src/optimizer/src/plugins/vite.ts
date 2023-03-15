@@ -45,6 +45,7 @@ export function qwikVite(qwikViteOpts: QwikVitePluginOptions = {}): any {
   let ssrOutDir: string | null = null;
   const injections: GlobalInjections[] = [];
   const qwikPlugin = createPlugin(qwikViteOpts.optimizerOptions);
+  let angularPlugin: {qwikAngularTransform: (code: string, id: string) => Promise<{code: string}>} | undefined;
 
   const api: QwikVitePluginApi = {
     getOptimizer: () => qwikPlugin.getOptimizer(),
@@ -58,6 +59,12 @@ export function qwikVite(qwikViteOpts: QwikVitePluginOptions = {}): any {
     name: 'vite-plugin-qwik',
     enforce: 'pre',
     api,
+
+    configResolved(config) {
+      angularPlugin = config.plugins.find(
+        (p) => p.name === '@analogjs/vite-plugin-angular'
+      ) as any;
+    },
 
     async config(viteConfig, viteEnv) {
       await qwikPlugin.init();
@@ -381,7 +388,7 @@ export function qwikVite(qwikViteOpts: QwikVitePluginOptions = {}): any {
       return qwikPlugin.load(this, id, loadOpts);
     },
 
-    transform(code, id, transformOpts) {
+    async transform(code, id, transformOpts) {
       if (id.startsWith('\0')) {
         return null;
       }
@@ -391,6 +398,16 @@ export function qwikVite(qwikViteOpts: QwikVitePluginOptions = {}): any {
           code = updateEntryDev(code);
         }
       }
+
+      if ( angularPlugin) {
+        if (id.includes('integrations/angular')) {
+          const transformed = (await angularPlugin.qwikAngularTransform?.(code, id))?.code;
+          if (transformed) {
+            code = transformed;
+          }
+        }
+      }
+
       return qwikPlugin.transform(this, code, id, transformOpts);
     },
 
