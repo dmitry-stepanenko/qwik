@@ -88,7 +88,7 @@ export function qwikRollup(qwikRollupOpts: QwikRollupPluginOptions = {}): any {
         });
       });
 
-      await qwikPlugin.buildStart(this);
+      await qwikPlugin.buildStart(this, null);
     },
 
     resolveId(id, importer) {

@@ -303,7 +303,7 @@ export function createPlugin(optimizerOptions: OptimizerOptions = {}) {
     }
   };
 
-  const buildStart = async (_ctx: any) => {
+  const buildStart = async (_ctx: any, ngPlugin: any) => {
     log(
       `buildStart()`,
       opts.buildMode,
@@ -373,6 +373,11 @@ export function createPlugin(optimizerOptions: OptimizerOptions = {}) {
       }
 
       const result = await optimizer.transformFs(transformOpts);
+
+      if (ngPlugin) {
+        await ngPlugin.processTrasformedModules?.(result.modules)
+      }
+
       for (const output of result.modules) {
         const key = normalizePath(path.join(srcDir, output.path)!);
         log(`buildStart() add transformedOutput`, key, output.hook?.displayName);

@@ -356,7 +356,7 @@ export function qwikVite(qwikViteOpts: QwikVitePluginOptions = {}): any {
         });
       });
 
-      await qwikPlugin.buildStart(this);
+      await qwikPlugin.buildStart(this, angularPlugin);
     },
 
     resolveId(id, importer, resolveIdOpts) {

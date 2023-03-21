@@ -1,5 +1,5 @@
 import { component$ } from '@builder.io/qwik';
-import { App } from './examples/app';
+// import { App } from './examples/app';
 
 export const Root = component$(() => {
   return (
@@ -31,7 +31,7 @@ export const Root = component$(() => {
         <box />
         <box />
         <box />
-        <App client:visible />
+        {/* <App client:visible /> */}
       </body>
     </>
   );
