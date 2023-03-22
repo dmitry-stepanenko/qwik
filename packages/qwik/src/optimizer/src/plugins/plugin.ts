@@ -921,6 +921,9 @@ export interface QwikPluginOptions {
   };
 }
 
+/**
+ * @alpha
+ */
 export interface NormalizedQwikPluginOptions extends Required<QwikPluginOptions> {
   input: string[];
 }
