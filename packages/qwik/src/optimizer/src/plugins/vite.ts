@@ -24,6 +24,7 @@ import {
   CLIENT_OUT_DIR,
   QWIK_JSX_DEV_RUNTIME_ID,
   SSR_OUT_DIR,
+  QwikPluginAddon,
 } from './plugin';
 import { createRollupError, normalizeRollupOutputOptions } from './rollup';
 import { configureDevServer, configurePreviewServer, VITE_DEV_CLIENT_QS } from './vite-server';
@@ -52,6 +53,7 @@ export function qwikVite(qwikViteOpts: QwikVitePluginOptions = {}): any {
     getManifest: () => manifestInput,
     getRootDir: () => qwikPlugin.getOptions().rootDir,
     getClientOutDir: () => clientOutDir,
+    registerQwikPluginAddon: (addon: QwikPluginAddon) => qwikPlugin.registerQwikPluginAddon(addon),
   };
 
   const vitePlugin: VitePlugin = {
@@ -781,6 +783,7 @@ export interface QwikVitePluginApi {
   getManifest: () => QwikManifest | null;
   getRootDir: () => string | null;
   getClientOutDir: () => string | null;
+  registerQwikPluginAddon: (addon: QwikPluginAddon) => void;
 }
 
 /**

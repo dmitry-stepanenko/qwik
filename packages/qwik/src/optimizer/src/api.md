@@ -227,6 +227,20 @@ export interface QwikManifest {
 }
 
 // @alpha (undocumented)
+export interface QwikPluginAddon {
+    // (undocumented)
+    onBeforeTransform?: (options: NormalizedQwikPluginOptions, code: string, id: string, ssrOpts?: {
+        ssr?: boolean;
+    }) => Promise<{
+        code?: string;
+    }>;
+    // Warning: (ae-forgotten-export) The symbol "NormalizedQwikPluginOptions" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    postProcessTransformOutput?: (options: NormalizedQwikPluginOptions, result: TransformOutput) => Promise<void>;
+}
+
+// @alpha (undocumented)
 export function qwikRollup(qwikRollupOpts?: QwikRollupPluginOptions): any;
 
 // @alpha (undocumented)
@@ -294,12 +308,12 @@ export interface QwikVitePluginApi {
     getManifest: () => QwikManifest | null;
     // (undocumented)
     getOptimizer: () => Optimizer | null;
-    // Warning: (ae-forgotten-export) The symbol "NormalizedQwikPluginOptions" needs to be exported by the entry point index.d.ts
-    //
     // (undocumented)
     getOptions: () => NormalizedQwikPluginOptions;
     // (undocumented)
     getRootDir: () => string | null;
+    // (undocumented)
+    registerQwikPluginAddon: (addon: QwikPluginAddon) => void;
 }
 
 // @alpha (undocumented)

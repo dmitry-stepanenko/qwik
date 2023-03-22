@@ -87,6 +87,8 @@ export function createPlugin(optimizerOptions: OptimizerOptions = {}) {
     },
   };
 
+  const addons: QwikPluginAddon[] = [];
+
   const init = async () => {
     if (!internalOptimizer) {
       internalOptimizer = await createOptimizer(optimizerOptions);
@@ -373,6 +375,11 @@ export function createPlugin(optimizerOptions: OptimizerOptions = {}) {
       }
 
       const result = await optimizer.transformFs(transformOpts);
+
+      for (const addon of addons) {
+        await addon.postProcessTransformOutput?.(opts, result);
+      }
+
       for (const output of result.modules) {
         const key = normalizePath(path.join(srcDir, output.path)!);
         log(`buildStart() add transformedOutput`, key, output.hook?.displayName);
@@ -523,6 +530,13 @@ export function createPlugin(optimizerOptions: OptimizerOptions = {}) {
     if (opts.forceFullBuild) {
       // Only run when moduleIsolated === true
       return null;
+    }
+
+    for (const addon of addons) {
+      const transformed = await addon.onBeforeTransform?.(opts, code, id, ssrOpts);
+      if (transformed?.code) {
+        code = transformed.code;
+      }
     }
 
     const optimizer = getOptimizer();
@@ -716,6 +730,10 @@ export function createPlugin(optimizerOptions: OptimizerOptions = {}) {
     diagnosticsCallback = cb;
   };
 
+  const registerQwikPluginAddon = (addon: QwikPluginAddon) => {
+    addons.push(addon);
+  };
+
   const normalizePath = (id: string) => {
     if (typeof id === 'string') {
       const sys = getSys();
@@ -773,6 +791,7 @@ export const manifest = ${JSON.stringify(manifest)};\n`;
     resolveId,
     transform,
     validateSource,
+    registerQwikPluginAddon,
   };
 }
 
@@ -876,3 +895,19 @@ export type QwikBuildTarget = 'client' | 'ssr' | 'lib' | 'test';
  * @alpha
  */
 export type QwikBuildMode = 'production' | 'development';
+
+/**
+ * @alpha
+ */
+export interface QwikPluginAddon {
+  postProcessTransformOutput?: (
+    options: NormalizedQwikPluginOptions,
+    result: TransformOutput
+  ) => Promise<void>;
+  onBeforeTransform?: (
+    options: NormalizedQwikPluginOptions,
+    code: string,
+    id: string,
+    ssrOpts?: { ssr?: boolean }
+  ) => Promise<{ code?: string }>;
+}
