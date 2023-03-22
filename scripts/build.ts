@@ -28,6 +28,7 @@ import { tsc } from './tsc';
 import { validateBuild } from './validate-build';
 import { buildQwikAuth } from './qwik-auth';
 import { buildSupabaseAuthHelpers } from './supabase-auth-helpers';
+import { buildQwikAngular } from './qwik-angular';
 import { buildQwikWorker } from './qwik-worker';
 import { buildQwikLabs } from './qwik-labs';
 
@@ -102,6 +103,10 @@ export async function build(config: BuildConfig) {
 
     if (config.qwikcity) {
       await buildQwikCity(config);
+    }
+
+    if (config.qwikangular) {
+      await buildQwikAngular(config);
     }
 
     if (config.qwikreact) {
