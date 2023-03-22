@@ -94,6 +94,14 @@ export interface InlineEntryStrategy {
 // @alpha (undocumented)
 export type MinifyMode = 'simplify' | 'none';
 
+// Warning: (ae-forgotten-export) The symbol "QwikPluginOptions" needs to be exported by the entry point index.d.ts
+//
+// @alpha (undocumented)
+export interface NormalizedQwikPluginOptions extends Required<QwikPluginOptions> {
+    // (undocumented)
+    input: string[];
+}
+
 // @alpha (undocumented)
 export interface Optimizer {
     sys: OptimizerSystem;
@@ -234,8 +242,6 @@ export interface QwikPluginAddon {
     }) => Promise<{
         code?: string;
     }>;
-    // Warning: (ae-forgotten-export) The symbol "NormalizedQwikPluginOptions" needs to be exported by the entry point index.d.ts
-    //
     // (undocumented)
     postProcessTransformOutput?: (options: NormalizedQwikPluginOptions, result: TransformOutput) => Promise<void>;
 }
