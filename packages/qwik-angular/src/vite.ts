@@ -2,7 +2,7 @@ import originalAngularPluginsImport, {
   type PluginOptions as ViteAngularPluginOptions,
 } from '@analogjs/vite-plugin-angular';
 import type { Plugin } from 'vite';
-import {compile, type Options} from 'sass';
+import { compile, type Options } from 'sass';
 
 // default import from the '@analogjs/vite-plugin-angular' is not resolved properly
 const originalAngularPlugins = (originalAngularPluginsImport as any)
@@ -13,9 +13,9 @@ const ANALOG_ANGULAR_PLUGIN = '@analogjs/vite-plugin-angular';
 export type PluginOptions = ViteAngularPluginOptions & {
   componentsDir: string;
   bundleSassFilesInDevMode?: {
-    paths: string[]
-    compileOptions?: Options<'sync'>
-  }
+    paths: string[];
+    compileOptions?: Options<'sync'>;
+  };
 };
 
 export function angular(options: PluginOptions) {
@@ -23,7 +23,6 @@ export function angular(options: PluginOptions) {
 
   for (const p of plugins) {
     if (p.name === ANALOG_ANGULAR_PLUGIN) {
-      // rename the transform method so that it is called manually
       const transform = p.transform;
       p.transform = function (code, id, ssrOpts) {
         if (!id.includes(options.componentsDir)) {
@@ -60,16 +59,16 @@ function analogQwikPlugin(options: PluginOptions) {
       }
 
       if (bundleSassFilePaths?.some((p) => id.includes(p))) {
-          // TODO: normalize path
-          id = id.replace(/\?(.*)/, "");
-          try {
-              const compiledAsset = compile(id, options.bundleSassFilesInDevMode?.compileOptions).css;
-              return compiledAsset;
-          } catch (e) {
-              // if failed to compile, do nothing
-          }
+        // TODO: normalize path
+        id = id.replace(/\?(.*)/, '');
+        try {
+          const compiledAsset = compile(id, options.bundleSassFilesInDevMode?.compileOptions).css;
+          return compiledAsset;
+        } catch (e) {
+          // if failed to compile, do nothing
+        }
       }
-  },
+    },
   };
   return vitePluginQwikAngular;
 }
