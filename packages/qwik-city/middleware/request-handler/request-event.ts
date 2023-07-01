@@ -21,6 +21,7 @@ import { encoder } from './resolve-request-handlers';
 import { createCacheControl } from './cache-control';
 import type { ValueOrPromise } from '@builder.io/qwik';
 import type { QwikManifest, ResolvedManifest } from '@builder.io/qwik/optimizer';
+import {isPromise} from './../../runtime/src/utils';
 
 const RequestEvLoaders = Symbol('RequestEvLoaders');
 const RequestEvMode = Symbol('RequestEvMode');
@@ -59,7 +60,7 @@ export function createRequestEvent(
     while (routeModuleIndex < requestHandlers.length) {
       const moduleRequestHandler = requestHandlers[routeModuleIndex];
       const result = moduleRequestHandler(requestEv);
-      if (result instanceof Promise) {
+      if (isPromise(result)) {
         await result;
       }
       routeModuleIndex++;
